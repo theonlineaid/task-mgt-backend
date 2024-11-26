@@ -1,0 +1,15 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb+srv://omor:31P6xbAYZhtBnYsM@cluster0.smp5ypd.mongodb.net/chat-app?retryWrites=true&w=majority&appName=Cluster0
+    volumes:
+      - .:/usr/src/app
+
+volumes:
+  db_data:
