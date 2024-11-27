@@ -23,11 +23,10 @@ interface CustomRequest extends Request {
 //     }
 // }
 
-export const createTask = async (req: CustomRequest, res: Response, next: NextFunction) => {
+export const createTask = async (req: CustomRequest, res: Response) => {
     try {
-        const { userId } = req.user; // Now TypeScript knows that `req.user` exists
-        next();
-        const { title, team, stage, date, priority, assets } = req.body;
+        const { userId } = req.user; 
+        const { title, team, stage, date, priority, assets, dependencies } = req.body;
 
         let text = "New task has been assigned to you";
         if (team?.length > 1) {
@@ -52,7 +51,7 @@ export const createTask = async (req: CustomRequest, res: Response, next: NextFu
             priority: priority.toLowerCase(),
             assets,
             activities: [activity],
-            // dependencies: dependencies || [],
+            dependencies: dependencies || [],
         });
 
         await Notice.create({
@@ -207,6 +206,7 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
             .populate({
                 path: "team",
                 select: "name title email",
+                model: "TaskUser", // Use the correct model name "TaskUser"
             })
             .sort({ _id: -1 });
 
