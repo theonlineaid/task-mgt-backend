@@ -29,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(morgan("dev"));
+app.get("/", (req, res): any => res.send("<h1>Hello</h1>"));
 app.use("/api", RootRouter);
 
 app.use(routeNotFound);

@@ -24,9 +24,9 @@ export interface ITask extends Document {
   activities: IActivity[];
   subTasks: ISubTask[];
   assets: string[];
-  team: mongoose.Types.ObjectId[]; // References to User IDs
+  team: mongoose.Types.ObjectId[]; 
   isTrashed: boolean;
-  dependencies: mongoose.Types.ObjectId[]; // Array of Task IDs that this task depends on
+  dependencies: mongoose.Types.ObjectId[]; 
   createdAt: Date;
   updatedAt: Date;
 }
@@ -62,7 +62,7 @@ const taskSchema = new Schema<ITask>(
         },
         activity: { type: String },
         date: { type: Date, default: new Date() },
-        by: { type: Schema.Types.ObjectId, ref: "TaskUser" }, // Reference to "TaskUser"
+        by: { type: Schema.Types.ObjectId, ref: "TaskUser" },
       },
     ],
     subTasks: [
@@ -73,9 +73,9 @@ const taskSchema = new Schema<ITask>(
       },
     ],
     assets: [String],
-    team: [{ type: Schema.Types.ObjectId, ref: "TaskUser" }], // Reference to "TaskUser"
+    team: [{ type: Schema.Types.ObjectId, ref: "TaskUser" }],
     isTrashed: { type: Boolean, default: false },
-    dependencies: [{ type: Schema.Types.ObjectId, ref: "Task" }], // Reference to "Task" (for task dependencies)
+    dependencies: [{ type: Schema.Types.ObjectId, ref: "Task" }],
   },
   { timestamps: true }
 );
