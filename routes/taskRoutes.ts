@@ -21,7 +21,7 @@ taskRoutes.post("/duplicate/:id", protectRoute, isAdminRoute, duplicateTask);
 taskRoutes.post("/activity/:id", protectRoute, postTaskActivity);
 
 taskRoutes.get("/dashboard", protectRoute, dashboardStatistics);
-taskRoutes.get("/", protectRoute, getTasks);
+taskRoutes.get("/", protectRoute, getTasks); // use ?isTrashed=true
 taskRoutes.get("/:id", protectRoute, getTask);
 
 taskRoutes.put("/create-subtask/:id", protectRoute, isAdminRoute, createSubTask);
