@@ -2,7 +2,6 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import User from "../models/user";
 
-// Extending JwtPayload to include userId
 interface DecodedToken extends JwtPayload {
   userId: string;
 }
@@ -18,15 +17,6 @@ declare global {
       }
   }
 }
-
-// Defining an interface for a request that has user information
-// interface AuthenticatedRequest extends Request {
-//   user?: {
-//     email: string;
-//     isAdmin: boolean;
-//     userId: string;
-//   };
-// }
 
 // Protect route middleware
 export const protectRoute = async (

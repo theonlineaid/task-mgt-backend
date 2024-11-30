@@ -30,7 +30,7 @@ export const createJWT = (res: Response, userId: string): void => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Use HTTPS in production
+    secure: process.env.NODE_ENV !== "development", // Use HTTPS in production
     sameSite: "strict", // Prevent CSRF attacks
     maxAge: 24 * 60 * 60 * 1000, // 1 day in milliseconds
   });
