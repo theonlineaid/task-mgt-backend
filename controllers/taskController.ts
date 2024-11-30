@@ -25,7 +25,7 @@ interface CustomRequest extends Request {
 
 export const createTask = async (req: CustomRequest, res: Response) => {
     try {
-        const { userId } = req.user; 
+        const { userId } = req.user;
         const { title, team, stage, date, priority, assets, dependencies } = req.body;
 
         let text = "New task has been assigned to you";
@@ -113,7 +113,7 @@ export const duplicateTask = async (req: Request, res: Response): Promise<any> =
     }
 };
 
-export const postTaskActivity = async (req: CustomRequest, res: Response) : Promise<any>  => {
+export const postTaskActivity = async (req: CustomRequest, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
         const { userId } = req.user;
@@ -125,7 +125,7 @@ export const postTaskActivity = async (req: CustomRequest, res: Response) : Prom
             return res.status(404).json({ status: false, message: "Task not found." });
         }
 
-        const data:any = {
+        const data: any = {
             type,
             activity,
             by: userId,
@@ -217,7 +217,7 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-export const getTask = async (req: Request, res: Response) : Promise<any>  => {
+export const getTask = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
 
@@ -242,7 +242,7 @@ export const getTask = async (req: Request, res: Response) : Promise<any>  => {
     }
 };
 
-export const createSubTask = async (req: Request, res: Response) : Promise<any>  => {
+export const createSubTask = async (req: Request, res: Response): Promise<any> => {
     try {
         const { title, tag, date } = req.body;
         const { id } = req.params;
@@ -265,7 +265,7 @@ export const createSubTask = async (req: Request, res: Response) : Promise<any> 
     }
 };
 
-export const updateTask = async (req: Request, res: Response) : Promise<any>  => {
+export const updateTask = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
         const { title, date, team, stage, priority, assets } = req.body;
@@ -292,7 +292,7 @@ export const updateTask = async (req: Request, res: Response) : Promise<any>  =>
     }
 };
 
-export const trashTask = async (req: Request, res: Response) : Promise<any>  => {
+export const trashTask = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
 
@@ -312,7 +312,7 @@ export const trashTask = async (req: Request, res: Response) : Promise<any>  => 
     }
 };
 
-export const deleteRestoreTask = async (req: Request, res: Response) : Promise<any>  => {
+export const deleteRestoreTask = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
         const { actionType } = req.query;
@@ -346,7 +346,7 @@ export const deleteRestoreTask = async (req: Request, res: Response) : Promise<a
     }
 };
 
-export const manageDependencies = async (req: Request, res: Response) : Promise<any>  => {
+export const manageDependencies = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
         const { dependencies } = req.body;
@@ -358,7 +358,8 @@ export const manageDependencies = async (req: Request, res: Response) : Promise<
             });
         }
 
-        const validTasks = await Task.find({ _id: { $in: dependencies } });
+        // Validate the existence of each dependency
+        const validTasks = await Task.find({ _id: { $in: dependencies } }, "_id title");
         if (validTasks.length !== dependencies.length) {
             return res.status(400).json({
                 status: false,
@@ -366,11 +367,12 @@ export const manageDependencies = async (req: Request, res: Response) : Promise<
             });
         }
 
+        // Update the task's dependencies
         const updatedTask = await Task.findByIdAndUpdate(
             id,
-            { $set: { dependencies } },
+            { $set: { dependencies: validTasks.map((task) => task._id) } }, // Store IDs in the database
             { new: true }
-        ).populate("dependencies");
+        ).populate("dependencies", "_id title"); // Fetch `id` and `title` for response
 
         if (!updatedTask) {
             return res.status(404).json({ status: false, message: "Task not found." });
@@ -378,7 +380,10 @@ export const manageDependencies = async (req: Request, res: Response) : Promise<
 
         res.status(200).json({
             status: true,
-            task: updatedTask,
+            task: {
+                ...updatedTask.toObject(),
+                dependencies: validTasks.map((task) => ({ id: task._id, title: task.title })), // Format dependencies
+            },
             message: "Dependencies updated successfully.",
         });
     } catch (error: any) {
@@ -386,3 +391,4 @@ export const manageDependencies = async (req: Request, res: Response) : Promise<
         res.status(500).json({ status: false, message: "Internal server error." });
     }
 };
+
