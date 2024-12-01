@@ -26,7 +26,7 @@ taskRoutes.get("/:id", protectRoute, getTask);
 
 taskRoutes.put("/create-subtask/:id", protectRoute, isAdminRoute, createSubTask);
 taskRoutes.put("/update/:id", protectRoute, isAdminRoute, updateTask);
-taskRoutes.put("/:id", protectRoute, isAdminRoute, trashTask);
+taskRoutes.put("/trash/:id", protectRoute, isAdminRoute, trashTask);
 taskRoutes.put("/dependencies/:id", protectRoute, isAdminRoute, manageDependencies); // New route
 
 // 1. Path Parameter (:id):
